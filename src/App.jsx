@@ -3,11 +3,11 @@ import { Canvas } from "@react-three/fiber";
 import { createXRStore, XR } from "@react-three/xr";
 import { BirtdayModel } from "./models/Model";
 import { Environment } from "@react-three/drei";
-import { PerfHeadless, usePerf } from "r3f-perf";
 import { PinkModel } from "./models/Pink-ballon";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { GoldModel } from "./models/Gold-ballon";
 import { TransModel } from "./models/Trans-heart";
+import { Perf } from 'r3f-perf'
 
 function App() {
   const store = createXRStore();
@@ -17,11 +17,6 @@ function App() {
     console.log("vr : ", vr);
   }
 
-  // const PerfHook = () => {
-  //   const [gl, log, getReport] = usePerf()
-  //   return <PerfHeadless />
-  // }
-
   return (
     <>
       <button className="btn" onClick={() => handleVR()}>
@@ -29,6 +24,7 @@ function App() {
       </button>
       <Canvas>
         <XR store={store}>
+        <Perf position="top-left" />
           <group position-z={-5} scale={3} >
             <PinkModel position-z={-10} />
             <BirtdayModel />
@@ -40,9 +36,9 @@ function App() {
 
           //* postprocessing effects
 
-          <EffectComposer>
+          {/* <EffectComposer>
             <Bloom />
-          </EffectComposer>
+          </EffectComposer> */}
         </XR>
       </Canvas>
     </>
