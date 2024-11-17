@@ -2,7 +2,7 @@ import "./App.css";
 import { Canvas } from "@react-three/fiber";
 import { createXRStore, XR } from "@react-three/xr";
 import { BirtdayModel } from "./models/Model";
-import { Environment } from "@react-three/drei";
+import { Environment, OrbitControls } from "@react-three/drei";
 import { PinkModel } from "./models/Pink-ballon";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { GoldModel } from "./models/Gold-ballon";
@@ -33,6 +33,7 @@ function App() {
           </group>
           <Environment files={"./nebula-7.hdr"} background />
           <directionalLight position={[0, 10, 0]} intensity={5} castShadow />
+          <OrbitControls/>
 
           //* postprocessing effects
 

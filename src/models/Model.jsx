@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
+import { TextureLoader } from "three"
 
 export function BirtdayModel(props) {
   const group = React.useRef()
   const { nodes, materials, animations } = useGLTF('/model-transformed.glb')
   const { actions } = useAnimations(animations, group)
+  const roughnessMap = new TextureLoader().load("./woodplank_23_roughness.png")
 
   useEffect(() => {
     Object.keys(actions).forEach(action => {
@@ -16,7 +18,9 @@ export function BirtdayModel(props) {
   return (
     <group ref={group} {...props} dispose={null} scale={0.1} >
       <group name="Scene">
-        <mesh name="Base" geometry={nodes.Base.geometry} material={materials['Wooden Floor']} position={[-0.098, 2.563, 0.161]} scale={[9.8, 0.181, 9.8]} />
+        <mesh name="Base" geometry={nodes.Base.geometry} material={materials['Wooden Floor']} position={[-0.098, 2.563, 0.161]} scale={[9.8, 0.181, 9.8]} >
+          <meshStandardMaterial {...materials["Wooden Floor"]} roughnessMap={roughnessMap} />
+        </mesh>
         <group name="Cake" position={[0, -1.352, 0]} scale={0.506}>
           <mesh name="Mesh179" geometry={nodes.Mesh179.geometry} material={materials.PaletteMaterial001} />
           <mesh name="Mesh179_1" geometry={nodes.Mesh179_1.geometry} material={materials.PaletteMaterial001} />
