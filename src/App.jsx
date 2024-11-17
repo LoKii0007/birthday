@@ -6,7 +6,8 @@ import { Environment } from "@react-three/drei";
 import { PerfHeadless, usePerf } from "r3f-perf";
 import { PinkModel } from "./models/Pink-ballon";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
-import { RibbonPerticleModel } from "./models/Ribbon";
+import { GoldModel } from "./models/Gold-ballon";
+import { TransModel } from "./models/Trans-heart";
 
 function App() {
   const store = createXRStore();
@@ -31,7 +32,8 @@ function App() {
           <group position-z={-5} scale={3} >
             <PinkModel position-z={-10} />
             <BirtdayModel />
-            <RibbonPerticleModel />
+            <GoldModel/>
+            <TransModel />
           </group>
           <Environment files={"./nebula-7.hdr"} background />
           <directionalLight position={[0, 10, 0]} intensity={5} castShadow />
