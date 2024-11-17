@@ -25,7 +25,7 @@ function App() {
       <Canvas>
         <XR store={store}>
         <Perf position="top-left" />
-          <group position-z={-5} scale={3} >
+          <group position-z={-5} scale={3} position-y={-2} >
             <PinkModel position-z={-10} />
             <BirtdayModel />
             <GoldModel/>
