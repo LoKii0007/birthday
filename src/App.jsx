@@ -14,7 +14,7 @@ function App() {
 
   return (
     <>
-      <button onClick={() => handleVR()}>Enter VR</button>
+      <button className="btn" onClick={() => handleVR()}>Enter VR</button>
       <Canvas>
         <XR store={store}>
           <Environment files={"./nebula-7.hdr"} background />
