@@ -1,27 +1,101 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { TextureLoader } from "three"
+import { useControls, folder } from 'leva'
+import { useGlobal } from '../hooks/GlobalContext'
 
 export function BirtdayModel(props) {
   const group = React.useRef()
   const { nodes, materials, animations } = useGLTF('/model-transformed.glb')
   const { actions } = useAnimations(animations, group)
-  const roughnessMap = new TextureLoader().load("./woodplank_23_roughness.png")
+  const roughnessMap = new TextureLoader().load("/texture/Wood055_2K_Roughness.png")
+  const baseColor = new TextureLoader().load("/texture/woodplank_23_basecolor.jpg")
+  const normal = new TextureLoader().load("/texture/woodplank_23_normal.jpg")
+
+  const {activeRef, setActiveRef, activeAsset, assetColor,animation  } = useGlobal()
+  const [position,setPosition]  = useState([0,0,0])
+  const [scale,setScale]  = useState(0.1)
+
+  const controls = useControls(
+    'Birthday Model',
+    {
+      Transform: folder({
+        position: { 
+          value: [0, 0, 0],
+          step: 0.1,
+        },
+        scale: {
+          value: 0.1,
+          min: 0.1,
+          max: 0.3,
+          step: 0.001
+        }
+      })
+    },
+    {
+      collapsed: true,
+      hidden: !(group?.current?.uuid === activeRef?.current?.uuid)
+    }
+  )
+
+  function playAnimation() {
+    Object.keys(actions).forEach((key) => {
+      actions[key].paused = false;
+      actions[key].play()
+    })
+  }
+
+  function pauseAnimation() {
+    Object.keys(actions).forEach((key) => {
+      actions[key].paused = true
+    })
+  }
 
   useEffect(() => {
-    Object.keys(actions).forEach(action => {
-      actions[action].play();
-    });
+    if(activeAsset?.name !== 'floor') return
+    if (animation) {
+      playAnimation()
+    } else {
+      pauseAnimation()
+    }
+  }, [animation, activeAsset])
 
-  }, [actions])
+
+  useEffect(() => {
+    playAnimation()
+  }, [])
+  
+  
+  useEffect(() => {
+    console.log(activeAsset)
+    if(activeAsset?.name === 'floor' ){
+      setActiveRef(group)
+      setPosition(controls?.position)
+      setScale(controls?.scale)
+      console.log(activeRef)
+    }
+
+  }, [activeAsset])
+
+  useEffect(() => {
+    // console.log('position :', position)
+  }, [activeRef, position, scale])
+
+  useEffect(() => {
+    console.log(activeAsset)
+    if ( materials['Wooden Floor'] && assetColor && activeAsset.name === 'floor' ) {
+      materials['Wooden Floor'].color.set(assetColor);
+    }
+  }, [materials, assetColor, activeAsset])
+
 
   return (
-    <group ref={group} {...props} dispose={null} scale={0.1} >
+    <group ref={group} {...props} position={position} dispose={null}  scale={scale} >
       <group name="Scene">
-        <mesh name="Base" geometry={nodes.Base.geometry} material={materials['Wooden Floor']} position={[-0.098, 2.563, 0.161]} scale={[9.8, 0.181, 9.8]} >
+        <mesh name="Base" castShadow receiveShadow geometry={nodes.Base.geometry} material={materials['Wooden Floor']} position={[-0.098, 2.563, 0.161]} scale={[9.8, 0.181, 9.8]} >
           <meshStandardMaterial {...materials["Wooden Floor"]} roughnessMap={roughnessMap} />
         </mesh>
-        <group name="Cake" position={[0, -1.352, 0]} scale={0.506}>
+        <group castShadow receiveShadow name="Cake" position={[0, -1.352, 0]} scale={0.506}>
           <mesh name="Mesh179" geometry={nodes.Mesh179.geometry} material={materials.PaletteMaterial001} />
           <mesh name="Mesh179_1" geometry={nodes.Mesh179_1.geometry} material={materials.PaletteMaterial001} />
           <mesh name="Mesh179_2" geometry={nodes.Mesh179_2.geometry} material={materials.PaletteMaterial002} />
@@ -36,10 +110,10 @@ export function BirtdayModel(props) {
           <mesh name="Mesh179_11" geometry={nodes.Mesh179_11.geometry} material={materials.PaletteMaterial001} />
           <mesh name="Mesh179_12" geometry={nodes.Mesh179_12.geometry} material={materials.PaletteMaterial001} />
         </group>
-        <mesh name="Pillar_1002" geometry={nodes.Pillar_1002.geometry} material={materials['Wood.001']} position={[8.534, 4.759, 9.348]} />
+        <mesh name="Pillar_1002" castShadow receiveShadow geometry={nodes.Pillar_1002.geometry} material={materials['Wood.001']} position={[8.534, 4.759, 9.348]} />
         
-        <mesh name="Sides_Ribbon" geometry={nodes.Sides_Ribbon.geometry} material={materials.PaletteMaterial004} >
-          <meshStandardMaterial color="red" emissive={"white"} emissiveIntensity={1} toneMapped={false} />
+        <mesh name="Sides_Ribbon" castShadow receiveShadow geometry={nodes.Sides_Ribbon.geometry} material={materials.PaletteMaterial004} >
+          {/* <meshStandardMaterial color="red" emissive={"white"} emissiveIntensity={1} toneMapped={false} /> */}
           </mesh>
       </group>
     </group>

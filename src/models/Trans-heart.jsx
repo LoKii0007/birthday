@@ -1,16 +1,46 @@
 import React, { useEffect } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
+import { useGlobal } from '../hooks/GlobalContext'
+import * as THREE from 'three'
 
 export function TransModel(props) {
   const group = React.useRef()
   const { nodes, materials, animations } = useGLTF('/trans-heart-transformed.glb')
   const { actions } = useAnimations(animations, group)
 
+  const {activeRef, setActiveRef, activeAsset, assetColor, setAssetColor, animation} = useGlobal()
+
+  function playAnimation() {
+    Object.keys(actions).forEach((key) => {
+      actions[key].paused = false;
+      actions[key].play()
+    })
+  }
+
+  function pauseAnimation() {
+    Object.keys(actions).forEach((key) => {
+      actions[key].paused = true
+    })
+  }
+
   useEffect(() => {
-    Object.keys(actions).forEach(action => {
-      actions[action].play();
-    });
-  }, [actions])
+    if(activeAsset?.name !== 'heartBalloon') return
+    if (animation) {
+      playAnimation()
+    } else {
+      pauseAnimation()
+    }
+  }, [animation, activeAsset])
+
+  useEffect(() => {
+    playAnimation()
+  }, [])
+
+  useEffect(() => {
+    if (materials?.['yellow.003'] && assetColor && activeAsset?.name === 'heartBalloon') {
+      materials['yellow.003'].color.set(assetColor);
+    }
+  }, [materials, assetColor, activeAsset])
 
   return (
     <group ref={group} {...props} dispose={null}>
